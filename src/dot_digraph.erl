@@ -14,7 +14,7 @@
 
 %% API
 
--spec load (dot()) -> out(digraph()).
+-spec load (dot()) -> out(digraph:digraph()).
 load (AST) ->
     {dot,digraph,_Direct,_Name,Assocs} = AST,
     G = digraph:new([]),
@@ -33,7 +33,7 @@ load (AST) ->
       lists:sort(fun erlang:'<'/2, Assocs)),
     {ok, G}.
 
--spec export (digraph()) -> out(dot()).
+-spec export (digraph:digraph()) -> out(dot()).
 export (G) ->
     {ok,
      {dot,digraph,false,<<>>,
@@ -42,28 +42,34 @@ export (G) ->
                 case digraph:vertex(G, V) of
                     {V, []} ->
                         false;
-                    {V, Label} ->
-                        {true, {node,{nodeid,V,<<>>,<<>>},
-                                [{'=',
-                                  case Key of
-                                      K when is_atom(K) ->
-                                          atom_to_list(K);
-                                      _ ->
-                                          Key
-                                  end,
-                                  Value} || {Key,Value} <- Label]
-                               }
+                    {V, Labels} ->
+                        {true, {node,{nodeid,v_str(V),<<>>,<<>>},
+                                [label_dot(Label) || Label <- Labels]}
                         }
                 end
         end, digraph:vertices(G))
       ++
       [ begin
-            {E, A, B, _Label} = digraph:edge(G, E),
+            {E, A, B, Labels} = digraph:edge(G, E),
             {'->'
-            ,{nodeid,A,<<>>,<<>>}
-            ,{nodeid,B,<<>>,<<>>},[]}
+            ,{nodeid,v_str(A),<<>>,<<>>}
+            ,{nodeid,v_str(B),<<>>,<<>>}
+            ,[label_dot(Label) || Label <- Labels]}
         end || E <- digraph:edges(G) ]}}.
 
 %% Internals
 
+v_str(['$v'|Id]) ->
+    "v" ++ integer_to_list(Id).
+
+label_dot({Key, Value}) ->
+    {'=',
+     case Key of
+	 K when is_atom(K) ->
+	     atom_to_list(K);
+	 _ ->
+	     Key
+     end,
+     Value}.
+		   
 %% End of Module.
