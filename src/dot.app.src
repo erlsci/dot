@@ -1,15 +1,16 @@
-{application, dot
-, [ {description, "An Erlang DOT (graph description language) library"}
-  , {vsn, "0.1"}
-  , {modules, [ dot
-              , dot_lexer
-              , dot_parser
-              , dot_digraph
-              ]}
-  , {registered, []}
-  , {applications, [ kernel
-                   , stdlib
-                   ]}
-  , {env, []}
-  ]
-}.
+{application, dot, [
+        {description, "An Erlang DOT (graph description language) library"},
+        {vsn, "0.3.0-dev"},
+        {modules, [
+                dot,
+                dot_lexer,
+                dot_parser,
+                dot_digraph
+        ]},
+        {registered, []},
+        {applications, [
+                kernel,
+                stdlib
+        ]},
+        {env, []}
+]}.
