@@ -1,0 +1,60 @@
+/* 
+  Huffman Tree DOT graph.
+
+  DOT Reference :  http://www.graphviz.org/doc/info/lang.html
+                   http://en.wikipedia.org/wiki/DOT_language
+  Timestamp     :  1604901024 
+  Phrase        :  'HIS TEAM SAYS HIS PRIORITIES ARE THE CORONAVIRUS PANDEMIC, THE ECONOMY, RACISM AND CLIMATE CHANGE.'
+
+  Generated on http://huffman.ooz.ie/
+*/
+
+digraph G {
+    edge [label=0];
+    graph [ranksep=0];
+    I [shape=record, label="{{I|9}|000}"];
+    N [shape=record, label="{{N|5}|0010}"];
+    T [shape=record, label="{{T|5}|0011}"];
+    M [shape=record, label="{{M|5}|0100}"];
+    O [shape=record, label="{{O|5}|0101}"];
+    MO [label=10];
+    Y [shape=record, label="{{Y|2}|01100}"];
+    DOT [shape=record, label="{{DOT|1}|011010}"];
+    U [shape=record, label="{{U|1}|0110110}"];
+    V [shape=record, label="{{V|1}|0110111}"];
+    H [shape=record, label="{{H|5}|0111}"];
+    YDOTUVH [label=10];
+    C [shape=record, label="{{C|6}|1000}"];
+    R [shape=record, label="{{R|6}|1001}"];
+    SPACE [shape=record, label="{{SPACE|14}|101}"];
+    S [shape=record, label="{{S|7}|1100}"];
+    D [shape=record, label="{{D|2}|110100}"];
+    P [shape=record, label="{{P|2}|110101}"];
+    G [shape=record, label="{{G|1}|1101100}"];
+    L [shape=record, label="{{L|1}|1101101}"];
+    GL [label=2];
+    COMA [shape=record, label="{{COMA|2}|110111}"];
+    GLCOMA [label=4];
+    A [shape=record, label="{{A|9}|1110}"];
+    E [shape=record, label="{{E|9}|1111}"];
+    98 -> 39 -> 19 -> I;
+    10 -> N;
+    20 -> MO -> M;
+    YDOTUVH -> 5 -> Y;
+    3 -> DOT;
+    2 -> U;
+    59 -> 26 -> 12 -> C;
+    33 -> 15 -> S;
+    8 -> 4 -> D;
+    GLCOMA -> GL -> G;
+    18 -> A;19 -> 10 -> T [label=1];
+    MO -> O [label=1];
+    5 -> 3 -> 2 -> V [label=1];
+    39 -> 20 -> YDOTUVH -> H [label=1];
+    12 -> R [label=1];
+    26 -> SPACE [label=1];
+    4 -> P [label=1];
+    GL -> L [label=1];
+    15 -> 8 -> GLCOMA -> COMA [label=1];
+    98 -> 59 -> 33 -> 18 -> E [label=1];
+}
