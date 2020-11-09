@@ -4,14 +4,12 @@
 
 %% dot: erlang-dot library's entry point.
 
--export([  from_string/1
-        ,    to_string/1
-
-        ,    from_file/1
-        ,      to_file/2
-
-        ,   load_graph/1
-        , export_graph/1 ]).
+-export([from_string/1,
+         to_string/1,
+         from_file/1,
+         to_file/2,
+         load_graph/1,
+         export_graph/1]).
 
 -include("include/dot.hrl").
 
@@ -20,8 +18,8 @@
 
 %% API
 
--spec from_string (string()) -> out(dot()).
-from_string (String) ->
+-spec from_string(string()) -> out(dot()).
+from_string(String) ->
     case scan(String) of
         {ok, Tokens, _Loc} ->
             case parse(Tokens) of
@@ -38,31 +36,31 @@ from_string (String) ->
             {error, {syntax_error, Line, Msg, L}}
     end.
 
--spec to_string (dot()) -> out(string()).
-to_string (AST) ->
+-spec to_string(dot()) -> out(string()).
+to_string(AST) ->
     {ok, tostring(AST)}.
 
--spec from_file (file:name()) -> out(dot()).
-from_file (Filename) -> %TODO: parse while reading file: best for huge files.
+-spec from_file(file:name()) -> out(dot()).
+from_file(Filename) -> %TODO: parse while reading file: best for huge files.
     {ok, Dev} = file:open(Filename, [read,unicode]),
     String = assemble_lines(Dev, []),
     ?MODULE:from_string(String).
 
--spec to_file (file:name(), dot()) -> out().
-to_file (Filename, AST) ->
+-spec to_file(file:name(), dot()) -> out().
+to_file(Filename, AST) ->
     {ok, String} = ?MODULE:to_string(AST),
     file:write_file(Filename, String).
 
 
--spec load_graph (dot()) -> out(term()).
-load_graph (AST) ->
+-spec load_graph(dot()) -> out(term()).
+load_graph(AST) ->
     case element(2,AST) of
         digraph ->
             dot_digraph:load(AST)
     end.
 
--spec export_graph (term()) -> out(dot()).
-export_graph (Graph) ->
+-spec export_graph(term()) -> out(dot()).
+export_graph(Graph) ->
     case Graph of
         Digraph when is_tuple  (Digraph),
                      size      (Digraph) =:= 5,
@@ -72,7 +70,7 @@ export_graph (Graph) ->
 
 %% Internals
 
-assemble_lines (Dev, Acc) ->
+assemble_lines(Dev, Acc) ->
     case file:read_line(Dev) of
         {ok, Line} ->
             assemble_lines(Dev, [Line|Acc]);
@@ -81,12 +79,13 @@ assemble_lines (Dev, Acc) ->
             lists:append(lists:reverse(Acc))
     end.
 
-scan (Str) ->
+scan(Str) ->
     dot_lexer:string(Str).
-parse (Tokens) ->
+
+parse(Tokens) ->
     dot_parser:parse(Tokens).
 
-tostring ({dot,GraphTy,Direct,Name,Things}) ->
+tostring({dot,GraphTy,Direct,Name,Things}) ->
     [ case GraphTy of
           'digraph' -> "digraph ";
           'graph'   -> "graph "
@@ -96,14 +95,14 @@ tostring ({dot,GraphTy,Direct,Name,Things}) ->
     , tostring(Things)
     , "}\n"
     ];
-tostring ({node,{nodeid,N,_,_},Opts}) ->
+tostring({node,{nodeid,N,_,_},Opts}) ->
     [$\t, N, assocs(Opts), " ;\n"];
-tostring ({Op,{nodeid,A,_,_},{nodeid,B,_,_},Opts}) ->
+tostring({Op,{nodeid,A,_,_},{nodeid,B,_,_},Opts}) ->
     case Op of
         '--' -> [$\t, A, " -- ", B, assocs(Opts), ";\n"];
         '->' -> [$\t, A, " -> ", B, assocs(Opts), ";\n"]
     end;
-tostring ({'=',Lhs,Rhs}) ->
+tostring({'=',Lhs,Rhs}) ->
     case Rhs of
         <<$", _/binary>> ->
             [Lhs, "=", Rhs];
@@ -112,12 +111,12 @@ tostring ({'=',Lhs,Rhs}) ->
         _ ->
             [Lhs, "=\"", Rhs, $\"]
     end;
-tostring (A) when is_list(A) ->
+tostring(A) when is_list(A) ->
     [tostring(X) || X <- A].
 
-assocs ([]) ->
+assocs([]) ->
     [];
-assocs (Opts) ->
+assocs(Opts) ->
     [" [", string:join([tostring(Opt) || Opt <- Opts], ", "), $]].
 
 %% End of Module.

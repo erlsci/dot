@@ -10,7 +10,7 @@
 
 %% API tests.
 
-parse_wikipedia_digraph_test () ->
+parse_wikipedia_digraph_test() ->
     ?assertEqual({ok,{dot,digraph,false,<<"graphname">>,
              [{'->',
                     {nodeid,<<"a">>,<<>>,<<>>},
@@ -30,7 +30,7 @@ digraph graphname {
      b -> d [color=blue];
  } ")).
 
-print_wikipedia_digraph_test () ->
+print_wikipedia_digraph_test() ->
     Digraph = "digraph graphname {\n"
         "\ta -> b [c=\"l\"];\n"
         "\tb -> c [c=\"l m\"];\n"

@@ -5,8 +5,8 @@
 
 %% dot_digraph: DOT <-> Erlang directed graph.
 
--export([   load/1
-        , export/1 ]).
+-export([load/1,
+         export/1]).
 
 -include("include/dot.hrl").
 
@@ -14,8 +14,8 @@
 
 %% API
 
--spec load (dot()) -> out(digraph:digraph()).
-load (AST) ->
+-spec load(dot()) -> out(digraph:digraph()).
+load(AST) ->
     {dot,digraph,_Direct,_Name,Assocs} = AST,
     G = digraph:new([]),
     lists:foreach(
@@ -33,8 +33,8 @@ load (AST) ->
       lists:sort(fun erlang:'<'/2, Assocs)),
     {ok, G}.
 
--spec export (digraph:digraph()) -> out(dot()).
-export (G) ->
+-spec export(digraph:digraph()) -> out(dot()).
+export(G) ->
     {ok,
      {dot,digraph,false,<<>>,
       lists:filtermap(
