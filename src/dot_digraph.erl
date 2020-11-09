@@ -10,11 +10,9 @@
 
 -include("include/dot.hrl").
 
--type out(Ty) :: {ok, Ty} | {error, term()}.
-
 %% API
 
--spec load(dot()) -> out(digraph:digraph()).
+-spec load(dot()) -> out(digraph:graph()).
 load(AST) ->
     {dot,digraph,_Direct,_Name,Assocs} = AST,
     G = digraph:new([]),
@@ -33,10 +31,17 @@ load(AST) ->
       lists:sort(fun erlang:'<'/2, Assocs)),
     {ok, G}.
 
--spec export(digraph:digraph()) -> out(dot()).
+-spec export(digraph:graph()) -> out(dot()).
 export(G) ->
-    {ok,
-     {dot,digraph,false,<<>>,
+    Name = <<>>,
+    {ok, #dot{type=digraph,
+              strict=false,
+              name=Name,
+              parts=get_vertices(G) ++ get_edges(G)}}.
+
+%% Internals
+
+get_vertices(G) ->
       lists:filtermap(
         fun (V) ->
                 case digraph:vertex(G, V) of
@@ -47,20 +52,22 @@ export(G) ->
                                 [label_dot(Label) || Label <- Labels]}
                         }
                 end
-        end, digraph:vertices(G))
-      ++
+        end, digraph:vertices(G)).
+
+get_edges(G) ->
       [ begin
             {E, A, B, Labels} = digraph:edge(G, E),
-            {'->'
-            ,{nodeid,v_str(A),<<>>,<<>>}
-            ,{nodeid,v_str(B),<<>>,<<>>}
-            ,[label_dot(Label) || Label <- Labels]}
-        end || E <- digraph:edges(G) ]}}.
+            {'->',
+             {nodeid, v_str(A), <<>>, <<>>},
+             {nodeid, v_str(B), <<>>, <<>>},
+             [label_dot(Label) || Label <- Labels]}
+        end || E <- digraph:edges(G) ].
 
-%% Internals
+%\v_str(['$v'|Id]) ->
+%    "v" ++ integer_to_list(Id).
 
-v_str(['$v'|Id]) ->
-    "v" ++ integer_to_list(Id).
+v_str(X) ->
+    X.
 
 label_dot({Key, Value}) ->
     {'=',
@@ -71,5 +78,3 @@ label_dot({Key, Value}) ->
 	     Key
      end,
      Value}.
-		   
-%% End of Module.

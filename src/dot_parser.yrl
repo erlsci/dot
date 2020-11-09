@@ -88,6 +88,3 @@ rw_edge (Edge) ->
             [{EdgeOp,NodeA,NodeB,Opts} | rw_edge({edge,NodeB,Rest,Opts})];
         _ -> []
     end.
-
-
-%% End of Parser.

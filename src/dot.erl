@@ -13,23 +13,13 @@
 
 -include("include/dot.hrl").
 
--type out(Ty) :: {ok, Ty} | {error, term()}.
--type out(  ) ::  ok      | {error, term()}.
-
 %% API
 
 -spec from_string(string()) -> out(dot()).
 from_string(String) ->
     case scan(String) of
         {ok, Tokens, _Loc} ->
-            case parse(Tokens) of
-                {ok, AST} ->
-                    {ok, AST};
-                {error, Reason} ->
-                    {error, Reason};
-                Reason ->
-                    {error, Reason}
-            end;
+            parse(Tokens);
         {error, SyntaxError, _Loc} ->
             {Line, _Lexer, Descr} = SyntaxError,
             [Msg, L] = dot_lexer:format_error(Descr),
@@ -40,11 +30,13 @@ from_string(String) ->
 to_string(AST) ->
     {ok, tostring(AST)}.
 
--spec from_file(file:name()) -> out(dot()).
-from_file(Filename) -> %TODO: parse while reading file: best for huge files.
-    {ok, Dev} = file:open(Filename, [read,unicode]),
+%%-spec from_file(file:name()) -> out(dot()). XXX <-- fix this ...
+-spec from_file(file:name()) -> no_return().
+from_file(Filename) ->
+    %% TODO: parse while reading file: best for huge files.
+    {ok, Dev} = file:open(Filename, [read, unicode]),
     String = assemble_lines(Dev, []),
-    ?MODULE:from_string(String).
+    from_string(String).
 
 -spec to_file(file:name(), dot()) -> out().
 to_file(Filename, AST) ->
@@ -59,14 +51,9 @@ load_graph(AST) ->
             dot_digraph:load(AST)
     end.
 
--spec export_graph(term()) -> out(dot()).
+-spec export_graph(digraph:graph()) -> out(dot()).
 export_graph(Graph) ->
-    case Graph of
-        Digraph when is_tuple  (Digraph),
-                     size      (Digraph) =:= 5,
-                     element(1, Digraph) == digraph ->
-            dot_digraph:export(Digraph)
-    end.
+    dot_digraph:export(Graph).
 
 %% Internals
 
@@ -118,5 +105,3 @@ assocs([]) ->
     [];
 assocs(Opts) ->
     [" [", string:join([tostring(Opt) || Opt <- Opts], ", "), $]].
-
-%% End of Module.

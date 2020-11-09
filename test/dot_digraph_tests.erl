@@ -7,11 +7,11 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
-
 %% API tests.
 
 load_export_test () ->
     {ok,A} = dot:from_string("digraph { a -> b -> c; b -> d; }"),
+    io:format("DEBUG --> A: ~p~n", [A]),
     {ok,G} = dot_digraph:load(A),
     {ok,{dot,digraph,false,<<>>,Raw}} = dot_digraph:export(G),
     ?assertEqual([
@@ -28,7 +28,3 @@ load_export_test () ->
                    {nodeid,<<"d">>,<<>>,<<>>},
                    []}],
        lists:sort(fun erlang:'<'/2, Raw)).
-
-%% Internals
-
-%% End of Module.

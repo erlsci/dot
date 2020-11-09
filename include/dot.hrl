@@ -9,5 +9,5 @@
              }).
 
 -type dot() :: #dot{}.
-
-%% End of Header.
+-type out(Ty) :: {'ok', Ty} | {'error', term()}.
+-type out() :: 'ok' | {'error', term()}.
